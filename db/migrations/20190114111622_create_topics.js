@@ -5,7 +5,7 @@ exports.up = function (knex, Promise) {
       .primary()
       .unique()
       .notNullable();
-    topicTable.string('description');
+    topicTable.text('description');
   });
 };
 
