@@ -1,6 +1,6 @@
 exports.formatDate = object => object.map(({ created_at, ...restObject }) => ({
   ...restObject,
-  created_at: new Date(created_at),
+  created_at: new Date(created_at).toLocaleString('en-GB'),
 }));
 
 exports.createArtRef = artRows => artRows.reduce((lookupObj, { title, article_id }) => {

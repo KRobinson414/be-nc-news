@@ -38,9 +38,25 @@ describe('/api', () => {
       .get('/api/topics/mitch/articles')
       .expect(200)
       .then(({ body }) => {
-        console.log(body);
         expect(body.articles).to.be.an('array');
         expect(body.articles.length).to.equal(10);
+        expect(body.articles[0].article_id).to.equal(1);
+      }));
+    it('GET status:200 responds to limit and offset queries', () => request
+      .get('/api/topics/mitch/articles?p=2')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).to.be.an('array');
+        expect(body.articles.length).to.equal(1);
+        expect(body.articles[0].article_id).to.equal(12);
+      }));
+    it('GET status:200 responds to sort_by and sort_order queries', () => request
+      .get('/api/topics/mitch/articles?sort_by=votes?sort_order=desc')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).to.be.an('array');
+        expect(body.articles.length).to.equal(10);
+        expect(body.articles[0].title).to.equal('Living in the shadow of a great man');
       }));
   });
 
