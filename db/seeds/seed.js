@@ -1,6 +1,6 @@
 const {
   topicData, userData, articleData, commentData,
-} = require('../data/development-data/index');
+} = require('../data/index');
 const { formatDate, createArtRef, formatComments } = require('../utils/index');
 
 exports.seed = function (knex, Promise) {

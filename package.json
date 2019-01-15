@@ -4,7 +4,7 @@
   "description": "## Northcoders News API",
   "main": "index.js",
   "scripts": {
-    "test": "psql -f ./test-setup.sql && mocha ./spec/*",
+    "test": "psql -f db/test-setup.sql && mocha spec/app.spec.js",
     "lint": "eslint ./",
     "pre-commit": "npm t",
     "posttest": "npm run lint",
