@@ -2,7 +2,7 @@ exports.up = function (knex, Promise) {
   return knex.schema.createTable('comments', (commentsTable) => {
     commentsTable.increments('comment_id').primary();
     commentsTable
-      .string('username')
+      .string('created_by')
       .references('users.username')
       .notNullable();
     commentsTable
