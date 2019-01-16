@@ -21,24 +21,45 @@ exports.createTopic = (req, res, next) => {
 
 exports.sendArticlesByTopic = (req, res, next) => {
   const {
-    limit = 10,
-    p = 1,
-    order_by = 'created_at',
-    sort_order = 'desc',
-    ...restArts
+    limit = 10, p = 1, order_by = 'created_at', sort_order = 'desc',
   } = req.query;
   const { topic } = req.params;
-  let pageOffset = 0;
-  if (p >= 2) pageOffset = p * limit - limit;
+  const pageOffset = (p - 1) * limit;
   connection('articles')
-    // .innerJoin('topics', 'articles.topic', 'topics.slug')
-    .select('*')
+    .select(
+      'articles.created_by as author',
+      'title',
+      'articles.article_id',
+      'articles.votes',
+      'articles.created_at',
+      'articles.topic',
+    )
+    .leftJoin('comments', 'comments.article_id', '=', 'articles.article_id')
+    .count({ comment_count: 'comments.comment_id' })
+    .groupBy('articles.article_id')
     .where({ topic })
     .limit(limit)
     .offset(pageOffset)
     .orderBy(order_by, sort_order)
     .then((articles) => {
+      if (articles.length === 0) return Promise.reject({ status: 404, message: 'Topic not found' });
       res.status(200).send({ articles });
+    })
+    .catch(next);
+};
+
+exports.createArticleByTopic = (req, res, next) => {
+  const { topic } = req.params;
+  connection('articles')
+    .insert({
+      title: req.body.title,
+      topic,
+      created_by: req.body.created_by,
+      body: req.body.body,
+    })
+    .returning('*')
+    .then(([article]) => {
+      res.status(201).send({ article });
     })
     .catch(next);
 };
