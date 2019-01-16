@@ -14,6 +14,7 @@ describe('/api', () => {
     .then(() => connection.seed.run()));
   after(() => connection.destroy());
 
+  // TOPICS
   describe('/topics', () => {
     it('GET status:200 responds with an array of topic objects', () => request
       .get('/api/topics')
@@ -51,6 +52,10 @@ describe('/api', () => {
       .then(({ body }) => {
         expect(body.message).to.equal('Invalid method for this endpoint');
       }));
+  });
+
+  // TOPICS/:TOPIC/ARTICLES
+  describe('/topics/:topic/articles', () => {
     it('GET status:200 responds with an array of article objects for the given topic', () => request
       .get('/api/topics/mitch/articles')
       .expect(200)
@@ -120,7 +125,9 @@ describe('/api', () => {
         expect(body.message).to.equal('Invalid method for this endpoint');
       }));
   });
-  describe.only('/articles', () => {
+
+  // ARTICLES
+  describe('/articles', () => {
     it('GET status:200 responds with an array of article objects', () => request
       .get('/api/articles')
       .expect(200)
@@ -159,6 +166,10 @@ describe('/api', () => {
       .then(({ body }) => {
         expect(body.articles[0].title).to.equal('Living in the shadow of a great man');
       }));
+  });
+
+  // ARTICLES/:ARTICLE_ID
+  describe('/api/articles/:article_id', () => {
     it('GET status:200 responds with an array of article objects by the given article_id', () => request
       .get('/api/articles/11')
       .expect(200)
@@ -200,9 +211,6 @@ describe('/api', () => {
         expect(body.article[0].title).to.equal('Moustache');
         expect(body.article[0].votes).to.equal(5);
       }));
+    // ERROR FOR WRONG FORMAT?
   });
-
-  // LECTURE NOTES
-  //     it('GET status:400 client uses an invalid mp_id', () => request.get('/api/mps/grape').expect(400));
-  //   });
 });
