@@ -21,8 +21,9 @@ exports.createTopic = (req, res, next) => {
 
 exports.sendArticlesByTopic = (req, res, next) => {
   const {
-    limit = 10, p = 1, order_by = 'created_at', sort_order = 'desc',
+    limit, p = 1, order_by = 'created_at', sort_order,
   } = req.query;
+
   const { topic } = req.params;
   const pageOffset = (p - 1) * limit;
   connection('articles')
@@ -38,9 +39,9 @@ exports.sendArticlesByTopic = (req, res, next) => {
     .count({ comment_count: 'comments.comment_id' })
     .groupBy('articles.article_id')
     .where({ topic })
-    .limit(limit)
+    .limit(+limit || 10)
     .offset(pageOffset)
-    .orderBy(order_by, sort_order)
+    .orderBy(order_by, sort_order === 'asc' ? 'asc' : 'desc')
     .then((articles) => {
       if (articles.length === 0) return Promise.reject({ status: 404, message: 'Topic not found' });
       res.status(200).send({ articles });
