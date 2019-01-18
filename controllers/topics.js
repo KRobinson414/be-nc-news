@@ -25,7 +25,7 @@ exports.sendArticlesByTopic = (req, res, next) => {
   } = req.query;
 
   const { topic } = req.params;
-  const pageOffset = (p - 1) * limit;
+  const pageOffset = (p - 1) * (+limit || 10);
   connection('articles')
     .select(
       'articles.created_by as author',

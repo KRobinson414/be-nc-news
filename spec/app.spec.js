@@ -95,15 +95,13 @@ describe('/api', () => {
         expect(body.articles.length).to.equal(10);
       }));
 
-    // OFFSET NOT WORKING :(
-    xit('GET status:200 offset query', () => request
+    it('GET status:200 offset query', () => request
       .get('/api/topics/mitch/articles?p=2')
       .expect(200)
       .then(({ body }) => {
-        console.log(body);
         expect(body.articles).to.be.an('array');
-        expect(body.articles.length).to.equal(0);
-        expect(body.articles[0].article_id).to.equal(11);
+        expect(body.articles.length).to.equal(1);
+        expect(body.articles[0].article_id).to.equal(12);
       }));
 
     it('GET status:200 responds with defaults when passed an invalid offset query', () => request
@@ -219,13 +217,12 @@ describe('/api', () => {
         expect(body.articles[0].article_id).to.equal(1);
       }));
 
-    // OFFSET NOT WORKING :(
-    xit('GET status:200 offset query', () => request
+    it('GET status:200 offset query', () => request
       .get('/api/articles?p=2')
       .expect(200)
       .then(({ body }) => {
         expect(body.articles).to.be.an('array');
-        expect(body.articles.length).to.equal(10);
+        expect(body.articles.length).to.equal(2);
         expect(body.articles[0].article_id).to.equal(11);
       }));
 
@@ -293,7 +290,7 @@ describe('/api', () => {
 
   // ARTICLES/:ARTICLE_ID
   describe('/api/articles/:article_id', () => {
-    it('GET status:200 responds with an article objects matching the given article_id', () => request
+    it('GET status:200 responds with an article object matching the given article_id', () => request
       .get('/api/articles/11')
       .expect(200)
       .then(({ body }) => {
@@ -337,8 +334,7 @@ describe('/api', () => {
         expect(body.article[0].votes).to.equal(5);
       }));
 
-    // SHOULD THIS BE 400 BAD REQUEST AS WITH POST??
-    it('PATCH status:400 client sends the inc_votes in the wrong format', () => request
+    it('PATCH status:404 client sends the inc_votes in the wrong format', () => request
       .patch('/api/article/12')
       .send({ vote: 5 })
       .expect(404));
@@ -359,10 +355,7 @@ describe('/api', () => {
         expect(article).to.equal(undefined);
       }));
 
-    it('DELETE status:204 client uses non-existent article_id', () => request
-      .delete('/api/articles/200')
-      .send({ inc_votes: 5 })
-      .expect(204));
+    it('DELETE status:204 client uses non-existent article_id', () => request.delete('/api/articles/200').expect(204));
   });
 
   // ARTICLES/:ARTICLE_ID/COMMENTS
@@ -391,8 +384,7 @@ describe('/api', () => {
         expect(body.comments.length).to.equal(10);
       }));
 
-    // OFFSET NOT WORKING :(
-    xit('GET status:200 offset query', () => request
+    it('GET status:200 offset query', () => request
       .get('/api/articles/1/comments?p=2')
       .expect(200)
       .then(({ body }) => {
@@ -458,11 +450,9 @@ describe('/api', () => {
 
     it('POST status:400 send the comment in the wrong format', () => request
       .post('/api/articles/23/comments')
-      .send('I do not like this article.' )
+      .send('I do not like this article.')
       .expect(400));
   });
-
-  // >>>>> ERRORS UPDATED TO HERE
 
   // ARTICLES/:ARTICLE_ID/COMMENTS/:COMMENT_ID
   describe('/api/articles/:article_id/comments/:comment_id', () => {
@@ -475,8 +465,6 @@ describe('/api', () => {
         expect(body.comment[0].votes).to.equal(10);
       }));
 
-    // ADD ERROR FOR NON-EXISTENT ARTICLE_ID??
-    // ERROR FOR WRONG FORMAT?
     it('PATCH status:404 client uses non-existent comment_id', () => request
       .patch('/api/articles/1/comments/68')
       .send({ inc_votes: 10 })
@@ -484,6 +472,7 @@ describe('/api', () => {
       .then(({ body }) => {
         expect(body.message).to.equal('Comment not found');
       }));
+
     it('PATCH status:404 client uses non-existent article_id', () => request
       .patch('/api/articles/68/comments/1')
       .send({ inc_votes: 10 })
@@ -491,6 +480,12 @@ describe('/api', () => {
       .then(({ body }) => {
         expect(body.message).to.equal('Comment not found');
       }));
+
+    it('PATCH status:404 client sends the inc_votes in the wrong format', () => request
+      .patch('/api/article/1/comments/5')
+      .send({ vote: 5 })
+      .expect(404));
+
     it('DELETE status:204 deletes the comment object and responds with no content', () => request
       .delete('/api/articles/1/comments/5')
       .expect(204)
@@ -501,6 +496,10 @@ describe('/api', () => {
       .then(([comment]) => {
         expect(comment).to.equal(undefined);
       }));
+
+    it('DELETE status:204 client uses non-existent article_id', () => request.delete('/api/articles/200/comments/1').expect(204));
+
+    it('DELETE status:204 client uses non-existent comment_id', () => request.delete('/api/articles/1/comments/200').expect(204));
   });
 
   // USERS
@@ -511,6 +510,7 @@ describe('/api', () => {
       .then(({ body }) => {
         expect(body).to.be.an('array');
       }));
+
     it('POST status:405 handles invalid request', () => request
       .post('/api/users')
       .send({ username: 'Rusty414', avatar_url: 'www.awesomepicture.com', name: 'Katie' })
@@ -518,18 +518,21 @@ describe('/api', () => {
       .then(({ body }) => {
         expect(body.message).to.equal('Invalid method for this endpoint');
       }));
+
     it('PATCH status:405 handles invalid request', () => request
       .patch('/api/users')
       .expect(405)
       .then(({ body }) => {
         expect(body.message).to.equal('Invalid method for this endpoint');
       }));
+
     it('PUT status:405 handles invalid request', () => request
       .put('/api/users')
       .expect(405)
       .then(({ body }) => {
         expect(body.message).to.equal('Invalid method for this endpoint');
       }));
+
     it('DELETE status:405 handles invalid request', () => request
       .delete('/api/users')
       .expect(405)
@@ -547,13 +550,48 @@ describe('/api', () => {
         expect(body.user).to.have.keys('username', 'avatar_url', 'name');
         expect(body.user.name).to.equal('jonny');
       }));
+    
+    it('GET status:404 client uses non-existent username', () => request
+      .get('/api/users/rusty414')
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).to.equal('User not found');
+      }));
+
+    it('POST status:405 handles invalid request', () => request
+      .post('/api/users/butter_bridge')
+      .send({ username: 'Rusty414', avatar_url: 'www.awesomepicture.com', name: 'Katie' })
+      .expect(405)
+      .then(({ body }) => {
+        expect(body.message).to.equal('Invalid method for this endpoint');
+      }));
+
+    it('PATCH status:405 handles invalid request', () => request
+      .patch('/api/users/butter_bridge')
+      .expect(405)
+      .then(({ body }) => {
+        expect(body.message).to.equal('Invalid method for this endpoint');
+      }));
+
+    it('PUT status:405 handles invalid request', () => request
+      .put('/api/users/butter_bridge')
+      .expect(405)
+      .then(({ body }) => {
+        expect(body.message).to.equal('Invalid method for this endpoint');
+      }));
+
+    it('DELETE status:405 handles invalid request', () => request
+      .delete('/api/users/butter_bridge')
+      .expect(405)
+      .then(({ body }) => {
+        expect(body.message).to.equal('Invalid method for this endpoint');
+      }));
   });
 
   // API
-  xdescribe('/api', () => {
+  describe('/api', () => {
     it('GET status:200 responds with a JSON describing all available endpoints', () => request
       .get('/api')
-      .expect(200)
       .then(({ body }) => {
         expect(body).to.be.an('object');
       }));

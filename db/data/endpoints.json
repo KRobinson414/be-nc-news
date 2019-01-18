@@ -1,0 +1,32 @@
+{
+  "/api": {
+    "/topics": {
+      "GET": "responds with an array of topic objects",
+      "POST": "accepts a topic object and responds with the posted object",
+      "/:topic/articles": {
+        "GET": "responds with an array of article objects for the given topic",
+        "POST": "accepts an article object and responds with the posted object"
+      }
+    },
+    "/articles": {
+      "GET": "responds with an array of article objects",
+      "/:article_id": {
+        "GET": "responds with an article object matching the given article_id",
+        "PATCH": "accepts a vote_inc object for the given article_id and responds with the updated article object",
+        "DELETE": "deletes the article object matching the given article_id",
+        "/comments": {
+          "GET": "responds with an array of comment object matching the given article_id",
+          "POST": "accepts a comment object for the given article_id and responds with the posted object",
+          "PATCH": "accepts a vote_inc object for the given article_id and comment_id and responds with the updated comment object",
+          "DELETE": "deletes the comment object matching the given article_id and comment_id"
+        }
+      }
+    },
+    "/users": {
+      "GET": "responds with an array of user articles",
+      "/:username": {
+        "GET": "responds with a user object matching the given username"
+      }
+    }
+  }
+}

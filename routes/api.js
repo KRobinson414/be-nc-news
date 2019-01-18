@@ -8,6 +8,6 @@ apiRouter.use('/topics', topicsRouter);
 apiRouter.use('/articles', articlesRouter);
 apiRouter.use('/users', usersRouter);
 
-// apiRouter.route('/').get(sendEndpoints);
+apiRouter.route('/').get(sendEndpoints);
 
 module.exports = apiRouter;

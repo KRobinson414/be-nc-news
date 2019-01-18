@@ -4,7 +4,7 @@ exports.sendArticles = (req, res, next) => {
   const {
     limit, p = 1, order_by = 'created_at', sort_order = 'desc',
   } = req.query;
-  const pageOffset = (p - 1) * limit;
+  const pageOffset = (p - 1) * (+limit || 10);
   connection('articles')
     .select(
       'articles.created_by as author',
@@ -81,7 +81,7 @@ exports.sendCommentsByArticleId = (req, res, next) => {
     limit, p = 1, order_by = 'created_at', sort_order = 'desc',
   } = req.query;
   const { article_id } = req.params;
-  const pageOffset = (p - 1) * limit;
+  const pageOffset = (p - 1) * (+limit || 10);
   connection('comments')
     .select(
       'comments.comment_id',
@@ -112,13 +112,11 @@ exports.addComment = (req, res, next) => {
     .catch(next);
 };
 
-// NEEDS TO NOT UPDATE IF ARTICLE_ID IS NON-EXISTENT OR INVALID??
 exports.addVoteToComment = (req, res, next) => {
   const { comment_id, article_id } = req.params;
   const { inc_votes } = req.body;
   connection('comments')
     .where({ comment_id, article_id })
-    // .where({ comment_id })
     .increment('votes', inc_votes)
     .returning('*')
     .then((comment) => {
