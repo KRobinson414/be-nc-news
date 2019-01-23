@@ -27,6 +27,29 @@ exports.sendArticles = (req, res, next) => {
     .catch(next);
 };
 
+// exports.sendArticlesById = (req, res, next) => {
+//   const { article_id } = req.params;
+//   connection('articles')
+//     .select(
+//       'articles.article_id',
+//       'articles.created_by as author',
+//       'title',
+//       'articles.votes',
+//       'articles.body',
+//       'articles.created_at',
+//       'articles.topic',
+//     )
+//     .leftJoin('comments', 'comments.article_id', '=', 'articles.article_id')
+//     .count({ comment_count: 'comments.comment_id' })
+//     .groupBy('articles.article_id')
+//     .where('articles.article_id', article_id)
+//     .then(([article]) => {
+//       if (!article) return Promise.reject({ status: 400, message: 'Article not found' });
+//       res.status(200).send({ article });
+//     })
+//     .catch(next);
+// };
+
 exports.sendArticlesById = (req, res, next) => {
   const { article_id } = req.params;
   connection('articles')
@@ -44,7 +67,7 @@ exports.sendArticlesById = (req, res, next) => {
     .groupBy('articles.article_id')
     .where('articles.article_id', article_id)
     .then(([article]) => {
-      if (!article) return Promise.reject({ status: 404, message: 'Article not found' });
+      if (!article_id) return Promise.reject({ status: 400, message: 'Article not found' });
       res.status(200).send({ article });
     })
     .catch(next);

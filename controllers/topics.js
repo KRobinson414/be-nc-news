@@ -52,19 +52,32 @@ exports.sendArticlesByTopic = (req, res, next) => {
 exports.createArticleByTopic = (req, res, next) => {
   const { topic } = req.params;
   connection('articles')
-    // .leftJoin('topics', 'topics.slug', '=', 'articles.topic')
-    // .then((topic) => {
-    //   if ()
-    // })
-    .insert({
-      title: req.body.title,
-      topic,
-      created_by: req.body.created_by,
-      body: req.body.body,
-    })
-    .returning('*')
-    .then(([article]) => {
-      res.status(201).send({ article });
-    })
-    .catch(next);
+    .select()
+    .where('topic', topic)
+    .then((rows) => {
+      if (rows.length === 0) {
+        Promise.reject({ status: 404, message: 'Topic not found' })
+          .catch(next);
+      } else {
+        connection('articles')
+          .insert({
+            title: req.body.title,
+            topic,
+            created_by: req.body.created_by,
+            body: req.body.body,
+          })
+          .returning('*')
+          .then(([article]) => {
+            res.status(201).send({ article });
+          })
+          .catch(next);
+      }
+    });
 };
+
+  // .returning('*')
+  // .then(([article]) => {
+  //   console.log(article)
+  //   res.status(201).send({ article });
+  // })
+

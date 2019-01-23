@@ -158,14 +158,14 @@ describe('/api', () => {
         expect(body.article.topic).to.equal('cats');
       }));
 
-    // it('POST status:404 client adds an article to a non-existent topic', () => request
-    //   .post('/api/topics/dogs/articles')
-    //   .send({
-    //     title: 'Shitter dogs',
-    //     created_by: 'rogersop',
-    //     body: 'You sort of do all the things you can do with dogs. But shitter.',
-    //   })
-    //   .expect(404));
+    it('POST status:404 client adds an article to a non-existent topic', () => request
+      .post('/api/topics/dogs/articles')
+      .send({
+        title: 'Shitter dogs',
+        created_by: 'rogersop',
+        body: 'You sort of do all the things you can do with dogs. But shitter.',
+      })
+      .expect(404));
 
     it('POST status:400 client sends mal-formed req.body', () => request
       .post('/api/topics/cats/articles')
@@ -306,7 +306,7 @@ describe('/api', () => {
   });
 
   // ARTICLES/:ARTICLE_ID
-  describe('/api/articles/:article_id', () => {
+  describe.only('/api/articles/:article_id', () => {
     it('GET status:200 responds with an article object matching the given article_id', () => request
       .get('/api/articles/11')
       .expect(200)
@@ -324,9 +324,9 @@ describe('/api', () => {
         expect(body.article.title).to.equal('Am I a cat?');
       }));
 
-    it('GET status:404 client uses non-existent article_id', () => request
+    it('GET status:400 client uses non-existent article_id', () => request
       .get('/api/articles/23')
-      .expect(404)
+      .expect(400)
       .then(({ body }) => {
         expect(body.message).to.equal('Article not found');
       }));
