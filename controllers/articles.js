@@ -2,7 +2,7 @@ const connection = require('../db/connection');
 
 exports.sendArticles = (req, res, next) => {
   const {
-    limit, p = 1, order_by = 'created_at', sort_order = 'desc',
+    limit, p = 1, sort_by = 'created_at', order = 'desc',
   } = req.query;
   const pageOffset = (p - 1) * (+limit || 10);
   connection('articles')
@@ -20,7 +20,7 @@ exports.sendArticles = (req, res, next) => {
     .groupBy('articles.article_id')
     .limit(+limit || 10)
     .offset(pageOffset)
-    .orderBy(order_by, sort_order === 'asc' ? 'asc' : 'desc')
+    .orderBy(sort_by, order === 'asc' ? 'asc' : 'desc')
     .then((articles) => {
       res.status(200).send({ articles });
     })
@@ -43,9 +43,9 @@ exports.sendArticlesById = (req, res, next) => {
     .count({ comment_count: 'comments.comment_id' })
     .groupBy('articles.article_id')
     .where('articles.article_id', article_id)
-    .then((articles) => {
-      if (articles.length === 0) return Promise.reject({ status: 404, message: 'Article not found' });
-      res.status(200).send({ articles });
+    .then(([article]) => {
+      if (!article) return Promise.reject({ status: 404, message: 'Article not found' });
+      res.status(200).send({ article });
     })
     .catch(next);
 };
@@ -58,9 +58,9 @@ exports.addVoteToArticle = (req, res, next) => {
     .increment('votes', inc_votes)
     .returning('*')
     .where({ article_id })
-    .then((article) => {
-      if (article.length === 0) return Promise.reject({ status: 404, message: 'Article not found' });
-      res.status(201).send({ article });
+    .then(([article]) => {
+      if (!article) return Promise.reject({ status: 404, message: 'Article not found' });
+      res.status(200).send({ article });
     })
     .catch(next);
 };
@@ -78,7 +78,7 @@ exports.deleteArticleById = (req, res, next) => {
 
 exports.sendCommentsByArticleId = (req, res, next) => {
   const {
-    limit, p = 1, order_by = 'created_at', sort_order = 'desc',
+    limit, p = 1, sort_by = 'created_at', order = 'desc',
   } = req.query;
   const { article_id } = req.params;
   const pageOffset = (p - 1) * (+limit || 10);
@@ -94,7 +94,7 @@ exports.sendCommentsByArticleId = (req, res, next) => {
     .where('comments.article_id', article_id)
     .limit(+limit || 10)
     .offset(pageOffset)
-    .orderBy(order_by, sort_order === 'asc' ? 'asc' : 'desc')
+    .orderBy(sort_by, order === 'asc' ? 'asc' : 'desc')
     .then((comments) => {
       res.status(200).send({ comments });
     })
@@ -119,9 +119,9 @@ exports.addVoteToComment = (req, res, next) => {
     .where({ comment_id, article_id })
     .increment('votes', inc_votes)
     .returning('*')
-    .then((comment) => {
-      if (comment.length === 0) return Promise.reject({ status: 404, message: 'Comment not found' });
-      res.status(201).send({ comment });
+    .then(([comment]) => {
+      if (!comment) return Promise.reject({ status: 404, message: 'Comment not found' });
+      res.status(200).send({ comment });
     })
     .catch(next);
 };

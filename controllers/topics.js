@@ -21,7 +21,7 @@ exports.createTopic = (req, res, next) => {
 
 exports.sendArticlesByTopic = (req, res, next) => {
   const {
-    limit, p = 1, order_by = 'created_at', sort_order,
+    limit, p = 1, sort_by = 'created_at', order,
   } = req.query;
 
   const { topic } = req.params;
@@ -41,7 +41,7 @@ exports.sendArticlesByTopic = (req, res, next) => {
     .where({ topic })
     .limit(+limit || 10)
     .offset(pageOffset)
-    .orderBy(order_by, sort_order === 'asc' ? 'asc' : 'desc')
+    .orderBy(sort_by, order === 'asc' ? 'asc' : 'desc')
     .then((articles) => {
       if (articles.length === 0) return Promise.reject({ status: 404, message: 'Topic not found' });
       res.status(200).send({ articles });
@@ -52,6 +52,10 @@ exports.sendArticlesByTopic = (req, res, next) => {
 exports.createArticleByTopic = (req, res, next) => {
   const { topic } = req.params;
   connection('articles')
+    // .leftJoin('topics', 'topics.slug', '=', 'articles.topic')
+    // .then((topic) => {
+    //   if ()
+    // })
     .insert({
       title: req.body.title,
       topic,
