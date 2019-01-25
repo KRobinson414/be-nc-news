@@ -27,29 +27,6 @@ exports.sendArticles = (req, res, next) => {
     .catch(next);
 };
 
-// exports.sendArticlesById = (req, res, next) => {
-//   const { article_id } = req.params;
-//   connection('articles')
-//     .select(
-//       'articles.article_id',
-//       'articles.created_by as author',
-//       'title',
-//       'articles.votes',
-//       'articles.body',
-//       'articles.created_at',
-//       'articles.topic',
-//     )
-//     .leftJoin('comments', 'comments.article_id', '=', 'articles.article_id')
-//     .count({ comment_count: 'comments.comment_id' })
-//     .groupBy('articles.article_id')
-//     .where('articles.article_id', article_id)
-//     .then(([article]) => {
-//       if (!article) return Promise.reject({ status: 400, message: 'Article not found' });
-//       res.status(200).send({ article });
-//     })
-//     .catch(next);
-// };
-
 exports.sendArticlesById = (req, res, next) => {
   const { article_id } = req.params;
   connection('articles')
@@ -67,7 +44,7 @@ exports.sendArticlesById = (req, res, next) => {
     .groupBy('articles.article_id')
     .where('articles.article_id', article_id)
     .then(([article]) => {
-      if (!article_id) return Promise.reject({ status: 400, message: 'Article not found' });
+      if (!article) return Promise.reject({ status: 404, message: 'Article not found' });
       res.status(200).send({ article });
     })
     .catch(next);
@@ -76,12 +53,16 @@ exports.sendArticlesById = (req, res, next) => {
 exports.addVoteToArticle = (req, res, next) => {
   const { article_id } = req.params;
   const { inc_votes } = req.body;
+
+
+
   connection('articles')
-    .select('*')
+    .select()
     .increment('votes', inc_votes)
     .returning('*')
     .where({ article_id })
     .then(([article]) => {
+      console.log(article, "*****")
       if (!article) return Promise.reject({ status: 404, message: 'Article not found' });
       res.status(200).send({ article });
     })
@@ -93,7 +74,8 @@ exports.deleteArticleById = (req, res, next) => {
   connection('articles')
     .where('articles.article_id', article_id)
     .del()
-    .then(() => {
+    .then((article_id) => {
+      if (!article_id) return Promise.reject({ status: 404, message: 'Article not found' });
       res.status(204).send({});
     })
     .catch(next);
@@ -107,6 +89,7 @@ exports.sendCommentsByArticleId = (req, res, next) => {
   const pageOffset = (p - 1) * (+limit || 10);
   connection('comments')
     .select(
+      'articles.article_id',
       'comments.comment_id',
       'comments.votes',
       'comments.created_at',

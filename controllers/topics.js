@@ -74,10 +74,3 @@ exports.createArticleByTopic = (req, res, next) => {
       }
     });
 };
-
-  // .returning('*')
-  // .then(([article]) => {
-  //   console.log(article)
-  //   res.status(201).send({ article });
-  // })
-

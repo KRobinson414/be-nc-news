@@ -306,7 +306,7 @@ describe('/api', () => {
   });
 
   // ARTICLES/:ARTICLE_ID
-  describe.only('/api/articles/:article_id', () => {
+  describe('/api/articles/:article_id', () => {
     it('GET status:200 responds with an article object matching the given article_id', () => request
       .get('/api/articles/11')
       .expect(200)
@@ -324,12 +324,16 @@ describe('/api', () => {
         expect(body.article.title).to.equal('Am I a cat?');
       }));
 
-    it('GET status:400 client uses non-existent article_id', () => request
+    it('GET status:404 client uses non-existent article_id', () => request
       .get('/api/articles/23')
-      .expect(400)
+      .expect(404)
       .then(({ body }) => {
         expect(body.message).to.equal('Article not found');
       }));
+
+    it('GET status:400 client uses an invalid article_id', () => request
+      .get('/api/articles/beef')
+      .expect(400));
 
     it('PATCH status:200 responds with an article object with the vote updated by the passed amount', () => request
       .patch('/api/articles/12')
@@ -349,10 +353,26 @@ describe('/api', () => {
         expect(body.article.votes).to.equal(5);
       }));
 
-    it('PATCH status:404 client sends the inc_votes in the wrong format', () => request
-      .patch('/api/article/12')
-      .send({ vote: 5 })
-      .expect(404));
+    it.skip('PATCH status:200 responds with an unmodified article object if no vote passed', () => request
+      .patch('/api/articles/12')
+      .send({})
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article).to.have.keys(
+          'article_id',
+          'created_by',
+          'title',
+          'body',
+          'created_at',
+          'topic',
+        );
+        expect(body.article.title).to.equal('Moustache');
+      }));
+
+    it.only('PATCH status:400 client sends invalid inc_votes', () => request
+      .patch('/api/articles/12')
+      .send({ inc_vote: 'invalid' })
+      .expect(400));
 
     it('PATCH status:404 client uses non-existent article_id', () => request
       .patch('/api/articles/27')
@@ -370,7 +390,9 @@ describe('/api', () => {
         expect(article).to.equal(undefined);
       }));
 
-    it('DELETE status:204 client uses non-existent article_id', () => request.delete('/api/articles/200').expect(204));
+    it('DELETE status:404 client uses non-existent article_id', () => request.delete('/api/articles/200').expect(404));
+
+    it('DELETE status:400 client uses an invalid article_id', () => request.delete('/api/articles/beef').expect(400));
   });
 
   // ARTICLES/:ARTICLE_ID/COMMENTS
@@ -383,6 +405,10 @@ describe('/api', () => {
         expect(body.comments.length).to.equal(10);
         expect(body.comments[0].comment_id).to.equal(2);
       }));
+
+    // it.only('GET status:404 client uses non-existent article_id', () => request.get('/api/articles/200').expect(404));
+
+    // it('GET status:400 client uses an invalid article_id', () => request.get('/api/articles/beef').expect(400));
 
     it('GET status:200 limit query', () => request
       .get('/api/articles/1/comments?limit=2')
