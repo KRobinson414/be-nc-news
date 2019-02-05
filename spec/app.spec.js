@@ -369,7 +369,7 @@ describe('/api', () => {
         expect(body.article.title).to.equal('Moustache');
       }));
 
-    it.only('PATCH status:200 responds with a default vote of 0 if passed an invalid vote', () => request
+    it.skip('PATCH status:200 responds with a default vote of 0 if passed an invalid vote', () => request
       .patch('/api/articles/12')
       .send({ inc_vote: 'invalid' })
       .expect(200)
