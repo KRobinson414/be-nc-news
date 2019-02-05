@@ -5,6 +5,7 @@ exports.handle404 = (err, req, res, next) => {
 };
 
 exports.handle400 = (err, req, res, next) => {
+  console.log(err)
   const codes400 = ['22PO2', '23503', '23502', '42703', '22P02'];
   if (codes400.includes(err.code)) res.status(400).send({ message: err.toString() });
   else next(err);

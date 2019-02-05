@@ -369,10 +369,14 @@ describe('/api', () => {
         expect(body.article.title).to.equal('Moustache');
       }));
 
-    it.only('PATCH status:400 client sends invalid inc_votes', () => request
+    it.only('PATCH status:200 responds with a default vote of 0 if passed an invalid vote', () => request
       .patch('/api/articles/12')
       .send({ inc_vote: 'invalid' })
-      .expect(400));
+      .expect(200)
+      .then(({ body }) => {
+        console.log(body)
+        expect(body.votes).to.equal(0);
+      }));
 
     it('PATCH status:404 client uses non-existent article_id', () => request
       .patch('/api/articles/27')
