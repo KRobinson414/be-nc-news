@@ -2,31 +2,31 @@ module.exports = [
   {
     username: 'tickle122',
     name: 'Tom Tickle',
-    avatar_url: './images/man.png',
+    avatar_url: 'https://image.flaticon.com/icons/svg/145/145842.svg',
   },
   {
     username: 'grumpy19',
     name: 'Paul Grump',
-    avatar_url: 'https://www.google.com/url?sa=i&source=images&cd=&cad=rja&uact=8&ved=2ahUKEwjEqtGe5qbgAhU65eAKHUoPDSsQjRx6BAgBEAU&url=https%3A%2F%2Fshop.mrmen.com%2Fproducts%2Ffamily-portrait-4-family-members%2F&psig=AOvVaw2MD8S0uhrTJ6OH9SdksZcD&ust=1549531862257070',
+    avatar_url: 'https://image.flaticon.com/icons/svg/145/145845.svg',
   },
   {
     username: 'happyamy2016',
     name: 'Amy Happy',
-    avatar_url: 'https://www.google.com/url?sa=i&source=images&cd=&cad=rja&uact=8&ved=2ahUKEwjGrfC35qbgAhWMHRQKHexHCPwQjRx6BAgBEAU&url=http%3A%2F%2Fwww.stickpng.com%2Fimg%2Fat-the-movies%2Fcartoons%2Fmr-men%2Fmr-happy&psig=AOvVaw2eSKVsAI1448cbvRknlB_y&ust=1549531936431131',
+    avatar_url: 'https://image.flaticon.com/icons/svg/145/145844.svg',
   },
   {
     username: 'cooljmessy',
     name: 'Peter Messy',
-    avatar_url: 'https://www.google.com/url?sa=i&source=images&cd=&cad=rja&uact=8&ved=2ahUKEwiEmZDQ5qbgAhX1DmMBHZaoCngQjRx6BAgBEAU&url=http%3A%2F%2Fwww.stickpng.com%2Fimg%2Fat-the-movies%2Fcartoons%2Fmr-men%2Fmr-messy&psig=AOvVaw3jHP7SHBg2uvyge7cdZr-w&ust=1549531966011415',
+    avatar_url: 'https://image.flaticon.com/icons/svg/145/145843.svg',
   },
   {
     username: 'weegembump',
     name: 'Gemma Bump',
-    avatar_url: 'https://www.google.com/url?sa=i&source=images&cd=&cad=rja&uact=8&ved=2ahUKEwjy4d3l5qbgAhW4AWMBHRv5BAQQjRx6BAgBEAU&url=https%3A%2F%2Fcrotoonia.fandom.com%2Fwiki%2FMr._Bump&psig=AOvVaw1Ymhuk6Yqb4DSooXt8jwkn&ust=1549532022826123',
+    avatar_url: 'https://image.flaticon.com/icons/svg/145/145850.svg',
   },
   {
     username: 'jessjelly',
     name: 'Jess Jelly',
-    avatar_url: 'https://s-media-cache-ak0.pinimg.com/564x/39/62/ec/3962eca164e60cf46f979c1f57d4078b.jpg',
+    avatar_url: 'https://image.flaticon.com/icons/svg/145/145847.svg',
   },
 ];
