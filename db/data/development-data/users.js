@@ -2,7 +2,7 @@ module.exports = [
   {
     username: 'tickle122',
     name: 'Tom Tickle',
-    avatar_url: 'https://www.google.com/url?sa=i&source=images&cd=&cad=rja&uact=8&ved=2ahUKEwjjzuf15abgAhWNkhQKHWI0DAYQjRx6BAgBEAU&url=https%3A%2F%2Fwww.kisspng.com%2Fpng-mr-tickle-mr-men-mr-happy-children-s-literature-ti-2888806%2F&psig=AOvVaw33nkyTn8919w-feX7mmOhw&ust=1549531706114637',
+    avatar_url: './images/man.png',
   },
   {
     username: 'grumpy19',
