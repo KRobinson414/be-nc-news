@@ -94,8 +94,10 @@ exports.sendCommentsByArticleId = (req, res, next) => {
       'comments.created_at',
       'comments.created_by as author',
       'comments.body',
+      'users.avatar_url',
     )
     .leftJoin('articles', 'articles.article_id', '=', 'comments.article_id')
+    .fullOuterJoin('users', 'users.username', '=', 'comments.created_by')
     .where('comments.article_id', article_id)
     .limit(+limit || 10)
     .offset(pageOffset)
