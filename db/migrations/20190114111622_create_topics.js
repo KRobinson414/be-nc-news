@@ -7,7 +7,6 @@ exports.up = function (knex, Promise) {
       .notNullable();
     topicTable
       .text('description')
-      .notNullable();
   });
 };
 
