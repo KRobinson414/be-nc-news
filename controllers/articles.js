@@ -55,17 +55,29 @@ exports.sendArticlesById = (req, res, next) => {
 exports.addVoteToArticle = (req, res, next) => {
   const { article_id } = req.params;
   const { inc_votes } = req.body;
-  connection('articles')
-    .select()
-    .increment('votes', inc_votes)
-    .returning('*')
-    .where({ article_id })
-    .then(([article]) => {
-      console.log(article, "*****")
-      if (!article) return Promise.reject({ status: 404, message: 'Article not found' });
-      res.status(200).send({ article });
-    })
-    .catch(next);
+  if (inc_votes > 0) {
+    connection('articles')
+      .select()
+      .increment('votes', inc_votes)
+      .returning('*')
+      .where({ article_id })
+      .then(([article]) => {
+        if (!article) return Promise.reject({ status: 404, message: 'Article not found' });
+        res.status(200).send({ article });
+      })
+      .catch(next);
+  } else {
+    connection('articles')
+      .select()
+      .decrement('votes', inc_votes)
+      .returning('*')
+      .where({ article_id })
+      .then(([article]) => {
+        if (!article) return Promise.reject({ status: 404, message: 'Article not found' });
+        res.status(200).send({ article });
+      })
+      .catch(next);
+  }
 };
 
 exports.deleteArticleById = (req, res, next) => {
