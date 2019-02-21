@@ -4,7 +4,7 @@ exports.sendArticles = (req, res, next) => {
   const {
     limit, p = 1, sort_by = 'created_at', order = 'desc',
   } = req.query;
-  const pageOffset = (p - 1) * (+limit || 50);
+  const pageOffset = (p - 1) * (+limit || 10);
   connection('articles')
     .select(
       'articles.created_by as author',
@@ -20,7 +20,7 @@ exports.sendArticles = (req, res, next) => {
     .fullOuterJoin('users', 'users.username', '=', 'articles.created_by')
     .count({ comment_count: 'comments.comment_id' })
     .groupBy('articles.article_id', 'users.avatar_url')
-    .limit(+limit || 70)
+    .limit(+limit || 10)
     .offset(pageOffset)
     .orderBy(sort_by, order === 'asc' ? 'asc' : 'desc')
     .then((articles) => {
@@ -84,7 +84,7 @@ exports.sendCommentsByArticleId = (req, res, next) => {
     limit, p = 1, sort_by = 'created_at', order = 'desc',
   } = req.query;
   const { article_id } = req.params;
-  const pageOffset = (p - 1) * (+limit || 50);
+  const pageOffset = (p - 1) * (+limit || 10);
   connection('comments')
     .select(
       'articles.article_id',
@@ -98,7 +98,7 @@ exports.sendCommentsByArticleId = (req, res, next) => {
     .leftJoin('articles', 'articles.article_id', '=', 'comments.article_id')
     .fullOuterJoin('users', 'users.username', '=', 'comments.created_by')
     .where('comments.article_id', article_id)
-    .limit(+limit || 50)
+    .limit(+limit || 10)
     .offset(pageOffset)
     .orderBy(sort_by, order === 'asc' ? 'asc' : 'desc')
     .then((comments) => {
