@@ -143,6 +143,7 @@ exports.deleteCommentById = (req, res, next) => {
     .catch(next);
 };
 
+// WRITE TEST FOR THIS
 exports.sendArticlesByUser = (req, res, next) => {
   const {
     limit, p = 1, sort_by = 'created_at', order = 'desc',
@@ -150,7 +151,7 @@ exports.sendArticlesByUser = (req, res, next) => {
   const pageOffset = (p - 1) * (+limit || 5);
   const { username } = req.params;
   connection('articles')
-    .where('articles.craeted_by', username)
+    .where('articles.created_by', username)
     .select(
       'articles.article_id',
       'articles.created_by as author',
@@ -160,7 +161,6 @@ exports.sendArticlesByUser = (req, res, next) => {
       'articles.created_at',
       'articles.topic',
     )
-    // .leftJoin('users', 'users.username', '=', 'articles.created_by')
     .limit(+limit || 5)
     .offset(pageOffset)
     .orderBy(sort_by, order === 'asc' ? 'asc' : 'desc')
