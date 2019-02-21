@@ -151,7 +151,6 @@ exports.sendArticlesByUser = (req, res, next) => {
   const pageOffset = (p - 1) * (+limit || 5);
   const { username } = req.params;
   connection('articles')
-    .where('articles.created_by', username)
     .select(
       'articles.article_id',
       'articles.created_by as author',
@@ -164,6 +163,7 @@ exports.sendArticlesByUser = (req, res, next) => {
     )
     .fullOuterJoin('users', 'users.username', '=', 'comments.created_by')
     .groupBy('articles.article_id', 'users.avatar_url')
+    .where('articles.created_by', username)
     .limit(+limit || 5)
     .offset(pageOffset)
     .orderBy(sort_by, order === 'asc' ? 'asc' : 'desc')
