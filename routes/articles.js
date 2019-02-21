@@ -8,12 +8,18 @@ const {
   addComment,
   addVoteToComment,
   deleteCommentById,
+  sendArticlesByUser,
 } = require('../controllers/articles');
 const { handle405 } = require('../errors');
 
 articlesRouter
   .route('/')
   .get(sendArticles)
+  .all(handle405);
+
+articlesRouter
+  .route('/:username')
+  .get(sendArticlesByUser)
   .all(handle405);
 
 articlesRouter

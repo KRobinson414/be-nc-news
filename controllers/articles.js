@@ -142,3 +142,30 @@ exports.deleteCommentById = (req, res, next) => {
     })
     .catch(next);
 };
+
+exports.sendArticlesByUser = (req, res, next) => {
+  const {
+    limit, p = 1, sort_by = 'created_at', order = 'desc',
+  } = req.query;
+  const pageOffset = (p - 1) * (+limit || 5);
+  const { username } = req.params;
+  connection('articles')
+    .where('articles.craeted_by', username)
+    .select(
+      'articles.article_id',
+      'articles.created_by as author',
+      'title',
+      'articles.votes',
+      'articles.body',
+      'articles.created_at',
+      'articles.topic',
+    )
+    // .leftJoin('users', 'users.username', '=', 'articles.created_by')
+    .limit(+limit || 5)
+    .offset(pageOffset)
+    .orderBy(sort_by, order === 'asc' ? 'asc' : 'desc')
+    .then((articles) => {
+      res.status(200).send({ articles });
+    })
+    .catch(next);
+};
