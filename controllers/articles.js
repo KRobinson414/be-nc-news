@@ -4,7 +4,7 @@ exports.sendArticles = (req, res, next) => {
   const {
     limit, p = 1, sort_by = 'created_at', order = 'desc',
   } = req.query;
-  const pageOffset = (p - 1) * (+limit || 10);
+  const pageOffset = (p - 1) * (+limit || 5);
   connection('articles')
     .select(
       'articles.created_by as author',
