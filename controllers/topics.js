@@ -25,7 +25,7 @@ exports.sendArticlesByTopic = (req, res, next) => {
   } = req.query;
 
   const { topic } = req.params;
-  const pageOffset = (p - 1) * (+limit || 10);
+  const pageOffset = (p - 1) * (+limit || 5);
   connection('articles')
     .select(
       'articles.created_by as author',
@@ -39,7 +39,7 @@ exports.sendArticlesByTopic = (req, res, next) => {
     .count({ comment_count: 'comments.comment_id' })
     .groupBy('articles.article_id')
     .where({ topic })
-    .limit(+limit || 10)
+    .limit(+limit || 5)
     .offset(pageOffset)
     .orderBy(sort_by, order === 'asc' ? 'asc' : 'desc')
     .then((articles) => {
@@ -54,12 +54,6 @@ exports.createArticleByTopic = (req, res, next) => {
   connection('articles')
     .select()
     .where('topic', topic)
-    // .then((rows) => {
-    // if (rows.length === 0) {
-    //   Promise.reject({ status: 404, message: 'Topic not found' })
-    //     .catch(next);
-    // } else {
-    // connection('articles')
     .insert({
       title: req.body.title,
       topic,
@@ -71,5 +65,4 @@ exports.createArticleByTopic = (req, res, next) => {
       res.status(201).send({ article });
     })
     .catch(next);
-  // }
 };
