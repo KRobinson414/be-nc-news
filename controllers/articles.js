@@ -31,7 +31,6 @@ exports.sendArticles = (req, res, next) => {
 
 exports.sendArticlesById = (req, res, next) => {
   const { article_id } = req.params;
-  console.log('hi')
   connection('articles')
     .select(
       'articles.article_id',
@@ -161,7 +160,9 @@ exports.sendArticlesByUser = (req, res, next) => {
       'articles.body',
       'articles.created_at',
       'articles.topic',
+      'users.avatar_url',
     )
+    .fullOuterJoin('users', 'users.username', '=', 'comments.created_by')
     .limit(+limit || 5)
     .offset(pageOffset)
     .orderBy(sort_by, order === 'asc' ? 'asc' : 'desc')
