@@ -20,7 +20,7 @@ exports.sendArticles = (req, res, next) => {
     .fullOuterJoin('users', 'users.username', '=', 'articles.created_by')
     .count({ comment_count: 'comments.comment_id' })
     .groupBy('articles.article_id', 'users.avatar_url')
-    .limit(+limit || 10)
+    .limit(+limit || 5)
     .offset(pageOffset)
     .orderBy(sort_by, order === 'asc' ? 'asc' : 'desc')
     .then((articles) => {
