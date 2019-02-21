@@ -72,7 +72,7 @@ exports.deleteArticleById = (req, res, next) => {
   connection('articles')
     .where('articles.article_id', article_id)
     .del()
-    .then((article_id) => {
+    .then(() => {
       if (!article_id) return Promise.reject({ status: 404, message: 'Article not found' });
       res.status(204).send({});
     })
