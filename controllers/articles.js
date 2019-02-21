@@ -31,6 +31,7 @@ exports.sendArticles = (req, res, next) => {
 
 exports.sendArticlesById = (req, res, next) => {
   const { article_id } = req.params;
+  console.log('hi')
   connection('articles')
     .select(
       'articles.article_id',

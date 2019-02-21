@@ -18,7 +18,7 @@ articlesRouter
   .all(handle405);
 
 articlesRouter
-  .route('/:username')
+  .route('/users/:username')
   .get(sendArticlesByUser)
   .all(handle405);
 
