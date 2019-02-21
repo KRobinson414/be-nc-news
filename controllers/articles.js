@@ -148,7 +148,7 @@ exports.sendArticlesByUser = (req, res, next) => {
   const {
     limit, p = 1, sort_by = 'created_at', order = 'desc',
   } = req.query;
-  const pageOffset = (p - 1) * (+limit || 5);
+  const pageOffset = (p - 1) * (+limit || 100);
   const { username } = req.params;
   connection('articles')
     .select(
@@ -166,7 +166,7 @@ exports.sendArticlesByUser = (req, res, next) => {
     .count({ comment_count: 'comments.comment_id' })
     .groupBy('articles.article_id', 'users.avatar_url')
     .where('articles.created_by', username)
-    .limit(+limit || 5)
+    .limit(+limit || 100)
     .offset(pageOffset)
     .orderBy(sort_by, order === 'asc' ? 'asc' : 'desc')
     .then((articles) => {
