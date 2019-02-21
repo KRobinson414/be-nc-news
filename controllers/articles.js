@@ -163,6 +163,7 @@ exports.sendArticlesByUser = (req, res, next) => {
       'users.avatar_url',
     )
     .fullOuterJoin('users', 'users.username', '=', 'comments.created_by')
+    .groupBy('articles.article_id', 'users.avatar_url')
     .limit(+limit || 5)
     .offset(pageOffset)
     .orderBy(sort_by, order === 'asc' ? 'asc' : 'desc')
