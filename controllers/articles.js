@@ -161,7 +161,9 @@ exports.sendArticlesByUser = (req, res, next) => {
       'articles.topic',
       'users.avatar_url',
     )
+    .leftJoin('comments', 'comments.article_id', '=', 'articles.article_id')
     .fullOuterJoin('users', 'users.username', '=', 'articles.created_by')
+    .count({ comment_count: 'comments.comment_id' })
     .groupBy('articles.article_id', 'users.avatar_url')
     .where('articles.created_by', username)
     .limit(+limit || 5)
