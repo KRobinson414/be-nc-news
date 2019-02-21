@@ -161,7 +161,7 @@ exports.sendArticlesByUser = (req, res, next) => {
       'articles.topic',
       'users.avatar_url',
     )
-    .fullOuterJoin('users', 'users.username', '=', 'comments.created_by')
+    .fullOuterJoin('users', 'users.username', '=', 'articles.created_by')
     .groupBy('articles.article_id', 'users.avatar_url')
     .where('articles.created_by', username)
     .limit(+limit || 5)
