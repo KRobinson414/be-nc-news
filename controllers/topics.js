@@ -34,8 +34,10 @@ exports.sendArticlesByTopic = (req, res, next) => {
       'articles.votes',
       'articles.created_at',
       'articles.topic',
+      'users.avatar_url',
     )
     .leftJoin('comments', 'comments.article_id', '=', 'articles.article_id')
+    .fullOuterJoin('users', 'users.username', '=', 'article.created_by')
     .count({ comment_count: 'comments.comment_id' })
     .groupBy('articles.article_id')
     .where({ topic })
