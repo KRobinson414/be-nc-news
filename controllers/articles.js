@@ -84,7 +84,7 @@ exports.sendCommentsByArticleId = (req, res, next) => {
     limit, p = 1, sort_by = 'created_at', order = 'desc',
   } = req.query;
   const { article_id } = req.params;
-  const pageOffset = (p - 1) * (+limit || 10);
+  const pageOffset = (p - 1) * (+limit || 5);
   connection('comments')
     .select(
       'articles.article_id',
@@ -98,7 +98,7 @@ exports.sendCommentsByArticleId = (req, res, next) => {
     .leftJoin('articles', 'articles.article_id', '=', 'comments.article_id')
     .fullOuterJoin('users', 'users.username', '=', 'comments.created_by')
     .where('comments.article_id', article_id)
-    .limit(+limit || 10)
+    .limit(+limit || 5)
     .offset(pageOffset)
     .orderBy(sort_by, order === 'asc' ? 'asc' : 'desc')
     .then((comments) => {
