@@ -143,7 +143,6 @@ exports.deleteCommentById = (req, res, next) => {
     .catch(next);
 };
 
-// WRITE TEST FOR THIS
 exports.sendArticlesByUser = (req, res, next) => {
   const {
     limit, p = 1, sort_by = 'created_at', order = 'desc',

@@ -36,13 +36,13 @@ describe('/api', () => {
 
     it('POST status:400 client sends mal-formed req.body', () => request
       .post('/api/topics')
-      .send({ slug: 'Katie' })
+      .send('Katie')
       .expect(400));
 
-    it('POST status:422 client sends a body with a duplicate slug', () => request
+    it('POST status:400 client sends a body with a duplicate slug', () => request
       .post('/api/topics')
       .send({ slug: 'mitch', description: 'The man, the Mitch, the legend' })
-      .expect(422));
+      .expect(400));
 
     it('PATCH status:405 handles invalid request', () => request
       .patch('/api/topics')
@@ -73,7 +73,7 @@ describe('/api', () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.articles).to.be.an('array');
-        expect(body.articles.length).to.equal(10);
+        expect(body.articles.length).to.equal(5);
         expect(body.articles[0].article_id).to.equal(1);
       }));
 
@@ -97,7 +97,7 @@ describe('/api', () => {
       .get('/api/topics/mitch/articles?limit=purple')
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles.length).to.equal(10);
+        expect(body.articles.length).to.equal(5);
       }));
 
     it('GET status:200 offset query', () => request
@@ -105,15 +105,15 @@ describe('/api', () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.articles).to.be.an('array');
-        expect(body.articles.length).to.equal(1);
-        expect(body.articles[0].article_id).to.equal(12);
+        expect(body.articles.length).to.equal(5);
+        expect(body.articles[0].article_id).to.equal(7);
       }));
 
     it('GET status:200 responds with defaults when passed an invalid offset query', () => request
       .get('/api/topics/mitch/articles?p=purple')
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles.length).to.equal(10);
+        expect(body.articles.length).to.equal(5);
         expect(body.articles[0].title).to.equal('Living in the shadow of a great man');
       }));
 
@@ -122,7 +122,7 @@ describe('/api', () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.articles).to.be.an('array');
-        expect(body.articles.length).to.equal(10);
+        expect(body.articles.length).to.equal(5);
         expect(body.articles[3].author).to.equal('icellusedkars');
       }));
 
@@ -133,7 +133,7 @@ describe('/api', () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.articles).to.be.an('array');
-        expect(body.articles.length).to.equal(10);
+        expect(body.articles.length).to.equal(5);
         expect(body.articles[0].title).to.equal('Moustache');
       }));
 
@@ -158,14 +158,14 @@ describe('/api', () => {
         expect(body.article.topic).to.equal('cats');
       }));
 
-    it('POST status:404 client adds an article to a non-existent topic', () => request
+    it('POST status:400 client adds an article to a non-existent topic', () => request
       .post('/api/topics/dogs/articles')
       .send({
         title: 'Shitter dogs',
         created_by: 'rogersop',
         body: 'You sort of do all the things you can do with dogs. But shitter.',
       })
-      .expect(404));
+      .expect(400));
 
     it('POST status:400 client sends mal-formed req.body', () => request
       .post('/api/topics/cats/articles')
@@ -206,6 +206,7 @@ describe('/api', () => {
         expect(body.articles).to.be.an('array');
         expect(body.articles[0]).to.have.keys(
           'author',
+          'avatar_url',
           'title',
           'article_id',
           'body',
@@ -230,7 +231,7 @@ describe('/api', () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.articles).to.be.an('array');
-        expect(body.articles.length).to.equal(10);
+        expect(body.articles.length).to.equal(5);
         expect(body.articles[0].article_id).to.equal(1);
       }));
 
@@ -239,8 +240,8 @@ describe('/api', () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.articles).to.be.an('array');
-        expect(body.articles.length).to.equal(2);
-        expect(body.articles[0].article_id).to.equal(11);
+        expect(body.articles.length).to.equal(5);
+        expect(body.articles[0].article_id).to.equal(6);
       }));
 
     it('GET status:200 responds with defaults when passed an invalid offset query', () => request
@@ -248,7 +249,7 @@ describe('/api', () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.articles).to.be.an('array');
-        expect(body.articles.length).to.equal(10);
+        expect(body.articles.length).to.equal(5);
         expect(body.articles[0].article_id).to.equal(1);
       }));
 
@@ -353,7 +354,7 @@ describe('/api', () => {
         expect(body.article.votes).to.equal(5);
       }));
 
-    it.skip('PATCH status:200 responds with an unmodified article object if no vote passed', () => request
+    it('PATCH status:200 responds with an unmodified article object if no vote passed', () => request
       .patch('/api/articles/12')
       .send({})
       .expect(200)
@@ -365,17 +366,9 @@ describe('/api', () => {
           'body',
           'created_at',
           'topic',
+          'votes',
         );
         expect(body.article.title).to.equal('Moustache');
-      }));
-
-    it.skip('PATCH status:200 responds with a default vote of 0 if passed an invalid vote', () => request
-      .patch('/api/articles/12')
-      .send({ inc_vote: 'invalid' })
-      .expect(200)
-      .then(({ body }) => {
-        console.log(body)
-        expect(body.votes).to.equal(0);
       }));
 
     it('PATCH status:404 client uses non-existent article_id', () => request
@@ -394,9 +387,82 @@ describe('/api', () => {
         expect(article).to.equal(undefined);
       }));
 
-    it('DELETE status:404 client uses non-existent article_id', () => request.delete('/api/articles/200').expect(404));
+    it('DELETE status:204 client uses non-existent article_id', () => request.delete('/api/articles/200').expect(204));
 
     it('DELETE status:400 client uses an invalid article_id', () => request.delete('/api/articles/beef').expect(400));
+  });
+
+  // ARTICLES/:USERNAME
+  describe.only('/articles/users/:username', () => {
+    it('GET status:200 responds with an array of article objects matching the given username', () => request
+      .get('/api/articles/users/rogersop')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).to.be.an('array');
+        expect(body.articles[0]).to.have.keys(
+          'author',
+          'avatar_url',
+          'title',
+          'article_id',
+          'body',
+          'votes',
+          'comment_count',
+          'created_at',
+          'topic',
+        );
+      }));
+
+    it('GET status:200 sort_by query', () => request
+      .get('/api/articles/users/rogersop?sort_by=article_id')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles[0].article_id).to.equal(10);
+      }));
+
+    it('GET status:400 invalid sort_by query', () => request.get('/api/articles/users/rogersop?sort_by=favourites').expect(400));
+
+    it('GET status:200 order query', () => request
+      .get('/api/articles/users/rogersop?order=asc')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles[0].article_id).to.equal(10);
+      }));
+
+    it('GET status:200 responds with defaults when passed an invalid order query', () => request
+      .get('/api/articles/users/rogersop?order=5')
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles[0].article_id).to.equal(4);
+      }));
+
+    it('POST status:405 handles invalid request', () => request
+      .post('/api/articles/users/rogersop')
+      .send({ body: 'some text' })
+      .expect(405)
+      .then(({ body }) => {
+        expect(body.message).to.equal('Invalid method for this endpoint');
+      }));
+
+    it('PATCH status:405 handles invalid request', () => request
+      .patch('/api/articles/users/rogersop')
+      .expect(405)
+      .then(({ body }) => {
+        expect(body.message).to.equal('Invalid method for this endpoint');
+      }));
+
+    it('PUT status:405 handles invalid request', () => request
+      .put('/api/articles/users/rogersop')
+      .expect(405)
+      .then(({ body }) => {
+        expect(body.message).to.equal('Invalid method for this endpoint');
+      }));
+
+    it('DELETE status:405 handles invalid request', () => request
+      .delete('/api/articles/users/rogersop')
+      .expect(405)
+      .then(({ body }) => {
+        expect(body.message).to.equal('Invalid method for this endpoint');
+      }));
   });
 
   // ARTICLES/:ARTICLE_ID/COMMENTS
@@ -406,13 +472,13 @@ describe('/api', () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.comments).to.be.an('array');
-        expect(body.comments.length).to.equal(10);
+        expect(body.comments.length).to.equal(5);
         expect(body.comments[0].comment_id).to.equal(2);
       }));
 
-    // it.only('GET status:404 client uses non-existent article_id', () => request.get('/api/articles/200').expect(404));
+    it('GET status:404 client uses non-existent article_id', () => request.get('/api/articles/200').expect(404));
 
-    // it('GET status:400 client uses an invalid article_id', () => request.get('/api/articles/beef').expect(400));
+    it('GET status:400 client uses an invalid article_id', () => request.get('/api/articles/beef').expect(400));
 
     it('GET status:200 limit query', () => request
       .get('/api/articles/1/comments?limit=2')
@@ -426,7 +492,7 @@ describe('/api', () => {
       .get('/api/articles/1/comments?limit=purple')
       .expect(200)
       .then(({ body }) => {
-        expect(body.comments.length).to.equal(10);
+        expect(body.comments.length).to.equal(5);
       }));
 
     it('GET status:200 offset query', () => request
@@ -434,15 +500,15 @@ describe('/api', () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.comments).to.be.an('array');
-        expect(body.comments.length).to.equal(3);
-        expect(body.comments[2].body).to.equal('This morning, I showered for nine minutes.');
+        expect(body.comments.length).to.equal(5);
+        expect(body.comments[2].body).to.equal('Superficially charming');
       }));
 
     it('GET status:200 responds with defaults when passed an invalid offset query', () => request
       .get('/api/articles/1/comments?p=purple')
       .expect(200)
       .then(({ body }) => {
-        expect(body.comments.length).to.equal(10);
+        expect(body.comments.length).to.equal(5);
         expect(body.comments[0].comment_id).to.equal(2);
       }));
 
@@ -451,7 +517,7 @@ describe('/api', () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.comments).to.be.an('array');
-        expect(body.comments.length).to.equal(10);
+        expect(body.comments.length).to.equal(5);
         expect(body.comments[0].comment_id).to.equal(18);
       }));
 
@@ -462,7 +528,7 @@ describe('/api', () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.comments).to.be.an('array');
-        expect(body.comments.length).to.equal(10);
+        expect(body.comments.length).to.equal(5);
         expect(body.comments[0].comment_id).to.equal(18);
       }));
 
