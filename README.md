@@ -1,4 +1,4 @@
-### NC News
+# NC News
 
 NC News is an API serving articles on a range of topics to the frontend app, Katie's NC News. Here is a link to the hosted API:
 
